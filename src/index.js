@@ -1,15 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
+import reduxThunk from 'redux-thunk';
 
 import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+import { getProfile } from './actions/authentication';
 import reducers from './reducers';
+import api from './_helpers/api';
 
-const store = createStore(reducers);
+const token = localStorage.getItem('token');
+const store = createStore(reducers, applyMiddleware(reduxThunk));
+
+if (token) {
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+    store.dispatch(getProfile());
+}
 
 ReactDOM.render(
     <Provider store={store}>
