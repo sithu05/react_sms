@@ -34,6 +34,16 @@ class Login extends Component {
     onSubmit = (values) => {
       this.props.authenticate(values);
     }
+  
+  renderAlert() {
+    const { incorrect, incorrectMsg } = this.props;
+
+    if (!incorrect) return null;
+
+    return (
+      <div className="alert alert-warning" role="alert">{incorrectMsg}</div>
+    );
+  }
 
   render () {
     return (
@@ -43,6 +53,8 @@ class Login extends Component {
                   <div className="card">
                       <div className="card-header">Login Your Account</div>
                       <div className="card-body">
+                        {this.renderAlert()}
+
                           <form onSubmit={this.props.handleSubmit(this.onSubmit)}>
                               <Field
                                   name="email"
@@ -79,7 +91,14 @@ const validate = ({ email, password }) => {
   return errors;
 };
 
-export default connect(null, { authenticate })(reduxForm({
+const mapStateToProps = (state) => {
+  return {
+    incorrect: state.auth.incorrect,
+    incorrectMsg: state.auth.incorrectMsg
+  };
+};
+
+export default connect(mapStateToProps, { authenticate })(reduxForm({
   form: 'login',
   validate
 })(Login));
