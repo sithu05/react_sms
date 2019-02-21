@@ -31,7 +31,7 @@ class Header extends Component {
 
     return (
       <ul className="navbar-nav ml-5 mr-auto">
-        <li className={`nav-item ${location.pathname === '/courses' ? 'active' : ''}`}>
+        <li className={`nav-item ${location.pathname.toString().split('/')[1] === 'courses' ? 'active' : ''}`}>
           <Link to="/courses" className="nav-link">Courses</Link>
         </li>
       </ul>

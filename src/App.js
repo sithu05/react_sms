@@ -22,7 +22,7 @@ class App extends Component {
             <Route exact path="/" component={RequireAuth(Dashboard)} />
             <Route path="/login" component={NoRequireAuth(() => <Login />)} />
             <Route exact path="/courses" component={RequireAuth(CourseList)} />
-            <Route path="/courses/create" component={RequireAuth(CourseCreate)} />
+            <Route path="/courses/create" component={RequireAuth(() => <CourseCreate />)} />
           </div>
         </div>
       </Router>

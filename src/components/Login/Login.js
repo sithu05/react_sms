@@ -15,7 +15,7 @@ class Login extends Component {
       }
   }
 
-  renderInput = ({ id, label, type, autocomplete, input, meta }) => {
+  renderInput = ({ id, label, type, input, meta }) => {
       const inputClass = `form-control ${meta.touched && meta.error ? 'is-invalid' : ''}`;
       return (
           <div className="form-group">

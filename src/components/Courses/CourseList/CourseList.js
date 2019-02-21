@@ -5,9 +5,11 @@ class CourseList extends Component {
   render() {
     return (
       <div className="row">
-        <div className="col-md-12">
+        <div className="col-md-11">
           <h3>Course List</h3>
-          <Link to="/courses/create" className="">Create</Link>
+        </div>
+        <div className="col-md-1">
+          <Link to="/courses/create" className="btn btn-primary">Create</Link>
         </div>
       </div>
     );
