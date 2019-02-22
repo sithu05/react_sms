@@ -1,73 +1,47 @@
 import React, { Component } from 'react';
-import { Field, FieldArray, reduxForm } from 'redux-form';
+import { Field, reduxForm } from 'redux-form';
+import { connect } from 'react-redux';
+import CreateableSelect from 'react-select/lib/Creatable';
+
+import { create_course } from '../../../actions/courses';
 
 class CourseCreate extends Component {
-  renderNameField = ({ input, label, meta: { touched, error } }) => {
+  renderField = ({ input, type, label, meta: { touched, error } }) => {
     const inputClass = `form-control ${touched && error ? 'is-invalid' : '' }`;
     return (
       <div className="form-group">
         <label>{label}</label>
 
-        <div className="input-group">
-          <input
-            {...input}
-            className={inputClass} />
-
-          <div className="input-group-append">
-            <button
-              onClick={() => this.props.array.push('subjects', '')}
-              className="btn btn-primary"
-              type="button">+ Add Subject</button>
-          </div>
-          {touched && error && <div className="invalid-feedback">{error}</div>}
-        </div>
-      </div>
-    );
-  }
-
-  renderField = ({ input, type, label, index, meta: { touched, error } }) => {
-    const inputClass = `form-control ${touched && error ? 'is-invalid' : '' }`;
-    return (
-      <div className="form-group">
-        <label>{label}</label>
-
-        <div className="input-group">
-          <input
+        <input
             {...input}
             type={type}
             className={inputClass} />
 
-          <div className="input-group-append">
-            <button
-              onClick={() => this.props.array.remove('subjects', index)}
-              type="button"
-              className="btn btn-danger">X</button>
-          </div>
-          {touched && error && <div className="invalid-feedback">{error}</div>}
-        </div>
+        {touched && error && <div className="invalid-feedback">{error}</div>}
       </div>
     );
   };
 
-  renderSubjectFields = ({ fields, meta: { submitFailed, error } }) => {
+  renderSelectField = ({ input, label, isMulti, meta: { touched, error } }) => {
     return (
-      <div>
-        {submitFailed && error && <p className="text-danger text-center">{error}</p>}
-        {fields.map((subject, index) => (
-          <Field
-            key={index}
-            name={subject}
-            type="text"
-            component={this.renderField}
-            index={index}
-            label={`Subject #${index + 1}`} /> 
-        ))}
+      <div className="form-group">
+        <label>{label}</label>
+
+        <CreateableSelect
+          {...input}
+          errorText="d"
+          value={input.value}
+          isMulti={isMulti}
+          onBlur={() => input.onBlur(input.value)}
+          onChange={input.onChange} />
+
+        {touched && error && <div className="d-block invalid-feedback">{error}</div>}
       </div>
     );
   }
 
   onSubmit = (values) => {
-    console.log(values);
+    this.props.create_course(values);
   }
 
   render() {
@@ -82,11 +56,13 @@ class CourseCreate extends Component {
                 <Field
                   name="name"
                   label="Course Name"
-                  component={this.renderNameField} />
+                  component={this.renderField} />
 
-                <FieldArray
+                <Field
                   name="subjects"
-                  component={this.renderSubjectFields} />
+                  label="Subjects"
+                  isMulti
+                  component={this.renderSelectField} />
 
                 <button type="submit" className="btn btn-primary">Save</button>
               </form>
@@ -100,24 +76,15 @@ class CourseCreate extends Component {
 
 const validate = ({ name, subjects }) => {
   const errors = {};
-  const subjectErrors = [];
 
   if (!name) errors['name'] = 'Course Name is required.';
 
-  if (!subjects || subjects.length === 0) {
-    errors['subjects'] = { _error: 'At lease, one subject is required.' }
-  } else {
-    subjects.forEach((subject, index) => {
-      if (!subject) subjectErrors[index] = 'Required';
-    });
-  }
-
-  if (subjectErrors.length) errors['subjects'] = subjectErrors;
+  if (!subjects || subjects.length === 0) errors['subjects'] = 'At lease, one subject is required.';
 
   return errors;
 };
 
-export default reduxForm({
+export default connect(null, { create_course })(reduxForm({
   form: 'course-create',
   validate
-})(CourseCreate);
+})(CourseCreate));

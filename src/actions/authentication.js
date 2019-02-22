@@ -25,8 +25,8 @@ export const getProfile = () => async (dispatch) => {
     const res = await api.get('/api/auth/me');
 
     dispatch({ type: LOGIN_SUCCESS, payload: res.data});
-  } catch (error) {
-    dispatch(logout());
+  } catch ({ response: { data }}) {
+    if (data.statusCode === 401) dispatch(logout());
   }
 };
 
